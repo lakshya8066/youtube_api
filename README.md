@@ -62,3 +62,5 @@ curl --location --request GET 'http://localhost:8080/api-key' \
 - Batch Processing: This can be implemented to store multiple videos in a single api call instead of fetching the data multiple times. This will reduce connection calls to the database.
 
 - Removing MySQL: This app could also be build by directly indexing the video data into ElasticSearch as the requirements of the app is minimum. 
+
+- Connection Pooling: We can implement connection pooling through which we can reuse the database connections instead of establishing it at each request. This would improve scalability and resource utilization.

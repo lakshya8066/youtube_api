@@ -19,7 +19,10 @@ func FetchVideos(youtubeService *youtube.Service, searchQuery string, maxResults
 		fmt.Println(err)
 	}
 
-	StoreVideo(response, maxResults, db)
+	err = StoreVideo(response, maxResults, db)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	elasticsearch.StoreToElastic()
 	return nil

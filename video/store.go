@@ -30,7 +30,7 @@ func StoreVideo(response *youtube.SearchListResponse, maxResults int, db *sql.DB
 	}
 
 	fmt.Println("Saving videos")
-	// Iterate through videos and store data in MySQL
+
 	for _, item := range response.Items[:maxResults] {
 		if snippet := item.Snippet; snippet != nil {
 			publishedAt, err := time.Parse(time.RFC3339, snippet.PublishedAt)
