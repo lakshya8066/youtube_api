@@ -31,8 +31,8 @@ func dbConnection() (*sql.DB, error) {
 	username := "root"
 	password := "12345678"
 	host := "localhost"
-	port := "3306"
-	database := "yt"
+	port := "3307"
+	database := "youtube"
 
 	// Form the connection string
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, database)
