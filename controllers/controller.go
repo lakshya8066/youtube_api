@@ -139,7 +139,7 @@ func Handler() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", helloHandler)
 	router.HandleFunc("/videos", getVideosHandler).Methods("GET")
-	router.HandleFunc("/api-key", APIKeyHandler)
+	router.HandleFunc("/api-key", APIKeyHandler).Methods("POST")
 
 	log.Println("Starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
