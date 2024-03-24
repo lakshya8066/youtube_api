@@ -48,7 +48,6 @@ func StoreToElastic() {
 		log.Fatalf("Error connecting to MySQL: %v", err)
 	}
 	defer db.Close()
-	fmt.Println("elastic connected to db")
 
 	// Query videos from MySQL
 	rows, err := db.Query("SELECT * FROM videos")
@@ -56,7 +55,6 @@ func StoreToElastic() {
 		log.Fatalf("Error querying videos from MySQL: %v", err)
 	}
 	defer rows.Close()
-	fmt.Println("elastic query video")
 
 	// Connect to Elasticsearch
 	cfg := elasticsearch.Config{
@@ -66,7 +64,6 @@ func StoreToElastic() {
 	if err != nil {
 		log.Fatalf("Error creating Elasticsearch client: %s", err)
 	}
-	fmt.Println("elastic connected to elasticsearch")
 
 	// Iterate over rows and load data into Elasticsearch
 	for rows.Next() {
@@ -85,7 +82,6 @@ func StoreToElastic() {
 			continue
 		}
 	}
-	fmt.Println("elastic indexed document")
 }
 
 func indexDocument(es *elasticsearch.Client, video Video) error {
@@ -97,7 +93,6 @@ func indexDocument(es *elasticsearch.Client, video Video) error {
 
 	// Index document into Elasticsearch
 	_, err = es.Index("videos", bytes.NewReader(data))
-	fmt.Println("elastic index successful")
 	if err != nil {
 		return fmt.Errorf("error indexing document into Elasticsearch: %w", err)
 	}

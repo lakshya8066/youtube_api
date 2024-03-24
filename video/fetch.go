@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/lakshya8066/youtube_api/elasticsearch"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -20,22 +21,6 @@ func FetchVideos(youtubeService *youtube.Service, searchQuery string, maxResults
 
 	StoreVideo(response, maxResults, db)
 
-	// elasticsearch.StoreToElastic()
-
-	// Print information about the first 5 videos
-	// if len(response.Items) > 0 {
-	// 	fmt.Println("Found", len(response.Items), "videos:")
-	// 	for _, item := range response.Items[:maxResults] {
-	// 		if snippet := item.Snippet; snippet != nil {
-	// 			fmt.Println("  - Title:", snippet.Title)
-	// 			fmt.Println("  - Description:", snippet.Title)
-	// 			fmt.Println("  - PublishedAt:", snippet.Title)
-	// 			fmt.Println("  - Thumbnail Url", snippet.Thumbnails.Default.Url)
-	// 			fmt.Println("  - ID:", item.Id)
-	// 		}
-	// 	}
-	// } else {
-	// 	fmt.Println("No videos found for", searchQuery)
-	// }
+	elasticsearch.StoreToElastic()
 	return nil
 }
