@@ -2,14 +2,51 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/lakshya8066/youtube_api/controllers"
+	"github.com/lakshya8066/youtube_api/video"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
+
+func fetchVideos(youtubeService *youtube.Service, searchQuery string, maxResults int, db *sql.DB) {
+	for {
+		// Code to be executed every 10 seconds
+		fmt.Println("This message is printed every 10 seconds.")
+
+		video.FetchVideos(youtubeService, searchQuery, maxResults, db)
+
+		// Sleep for 10 seconds using time.Sleep
+		time.Sleep(10 * time.Second)
+	}
+}
+
+func dbConnection() (*sql.DB, error) {
+	username := "root"
+	password := "12345678"
+	host := "localhost"
+	port := "3306"
+	database := "yt"
+
+	// Form the connection string
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, database)
+	// Open a connection to the MySQL database
+	fmt.Println("Opening connection")
+	db, err := sql.Open("mysql", connectionString)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Println("Opened connection")
+
+	return db, nil
+}
 
 func main() {
 
@@ -19,7 +56,7 @@ func main() {
 	}
 
 	// Define your YouTube API key here (replace with your actual key)
-	apiKey := os.Getenv("API_KEY")
+	apiKey := os.Getenv("YOUTUBE_API_KEY")
 	// Search query for football videos
 	searchQuery := "football"
 	// Maximum number of results to retrieve (limited to 10)
@@ -30,28 +67,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Define the search parameters
-	call := youtubeService.Search.List([]string{"id", "snippet"}).Q(searchQuery).MaxResults(int64(maxResults)).Type("video").Order("date")
 
-	// Execute the search request
-	response, err := call.Do()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db, err := dbConnection()
 
-	// Print information about the first 5 videos
-	if len(response.Items) > 0 {
-		fmt.Println("Found", len(response.Items), "videos:")
-		for _, item := range response.Items[:maxResults] {
-			if snippet := item.Snippet; snippet != nil {
-				fmt.Println("  - Title:", snippet.Title)
-				fmt.Println("  - Description:", snippet.Title)
-				fmt.Println("  - PublishedAt:", snippet.Title)
-				fmt.Println("  - Thumbnail Url", snippet.Thumbnails.Default.Url)
-				fmt.Println("  - ID:", item.Id)
-			}
-		}
-	} else {
-		fmt.Println("No videos found for", searchQuery)
-	}
+	go fetchVideos(youtubeService, searchQuery, maxResults, db)
+
+	defer db.Close()
+
+	controllers.Handler()
 }
